@@ -90,6 +90,7 @@ async def main():
     await consumer.stream()
 
 if __name__ == '__main__':
+    
     asyncio.run(main())   
     
     
