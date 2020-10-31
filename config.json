@@ -1,2 +1,2 @@
-{"Stream": {"api_key": "YOUR_API_KEY", "redirect_url":"https://localhost", "token_path":"YOUR_PATH_HERE\\token.pickle", "account_id":123456789}}
+{"Stream": {"api_key": "YOUR_API_KEY", "redirect_url":"https://localhost", "account_id":123456789}}
 
