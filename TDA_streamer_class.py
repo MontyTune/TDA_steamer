@@ -26,7 +26,8 @@ class MySteamConsumer:
         self.stream_client = None
         self.config = config
         self.symbols = [
-            "/ES"
+            "/ES",
+            "/NQ"
             ]
         self.queue = asyncio.Queue(queue_size)
             
@@ -34,14 +35,14 @@ class MySteamConsumer:
         self.tda_client = easy_client(
             api_key=     self.config['Stream']['api_key'],
             redirect_uri=self.config['Stream']['redirect_url'],
-            token_path=  self.config['Stream']['token_path'])
+            token_path=  self.token_path)
         
         self.stream_client = StreamClient(self.tda_client,account_id = self.account_id)
         
         
         # The streaming client wants you to add a handler for every service type
-        self.stream_client.add_level_one_futures_handler(self.handle_futures_quotes)   
-        
+        #self.stream_client.add_level_one_futures_handler(self.handle_futures_quotes)   
+        self.stream_client.add_timesale_futures_handler(self.handle_timesale_future)
                 
     async def stream(self):
         await self.stream_client.login() # Log into the streaming service
@@ -53,7 +54,7 @@ class MySteamConsumer:
         while True:
             await self.stream_client.handle_message()
                         
-    async def handle_futures_quotes(self, msg):
+    async def handle_timesale_future(self, msg):
         """
         This is where we take msgs from the streaming client and put them on a
         queue for later consumption. We use a queue to prevent us from wasting
@@ -81,12 +82,13 @@ async def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     abs_file_path = os.path.join(script_dir, "config.json")
     token_path = os.path.join(script_dir, "token.pickle")             
-    config_json = loadConfig(abs_file_path)
-    
-    consumer = MySteamConsumer(config_json['Stream']['api_key'], config_json['Stream']['account_id'], token_path, config_json)
+    config_json = loadConfig(abs_file_path)        
+    consumer = MySteamConsumer(config_json['Stream']['api_key'],
+                               config_json['Stream']['account_id'],
+                               token_path, config_json)    
     consumer.initialize()
-    await consumer.stream()
-
+    await consumer.stream()    
+    
 if __name__ == '__main__':    
     asyncio.run(main())
     
