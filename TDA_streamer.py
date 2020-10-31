@@ -82,10 +82,11 @@ async def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     abs_file_path = os.path.join(script_dir, "config.json")
     token_path = os.path.join(script_dir, "token.pickle")             
-    config_json = loadConfig(abs_file_path)        
-    consumer = MySteamConsumer(config_json['Stream']['api_key'],
-                               config_json['Stream']['account_id'],
-                               token_path, config_json)    
+    config = loadConfig(abs_file_path)        
+    consumer = MySteamConsumer(config['Stream']['api_key'],
+                               config['Stream']['account_id'],
+                               token_path,
+                               config)    
     consumer.initialize()
     await consumer.stream()    
     
